@@ -10,14 +10,30 @@ data_matrix = data.data
 target_vec = data.target
 featureNames = data.feature_names
 
+descriptor = {
+    "s":          20,        # point size
+    "c":          "blue",    # colour — can be a single colour or array of values
+    "marker":     "o",       # shape: "o", "x", "+", "^", "s", "D" etc.
+    "alpha":      0.5,       # transparency, 0 (invisible) to 1 (solid)
+    "edgecolors": "black",   # outline colour of each point
+    "linewidths": 0.5,       # thickness of that outline
+}
+
 
 count = 0
 yVal = target_vec[0:500]
 xVal = data_matrix[featureNames[count]][0:500]
 fig, axe = plt.subplots()
-axe.scatter(xVal, yVal)
+axe.scatter(xVal, yVal, **descriptor)
 
-button_space = fig.add_axes([0.4, 0.02, 0.2, 0.05])
+graph_labels = {
+    "xlabel":featureNames[count],
+    "ylabel":"median house value",
+    "title":f"{featureNames[count]} vs median house value"
+}
+
+axe.set(**graph_labels)
+button_space = fig.add_axes([0.01, 0.005, 0.2, 0.05])
 button_real = widgets.Button(button_space, label="Next", hovercolor="red")
 
 
@@ -25,11 +41,18 @@ def whenClick(event):
     print("button clicked")
     global count
     count += 1
-    if count == 4:
+    if count == 8:
         count = 0
     axe.cla()
+    graph_labels = {               # rebuilt here with new count
+        "xlabel": featureNames[count],
+        "ylabel": "median house value",
+        "title": f"{featureNames[count]} vs median house value"
+    }
+    axe.set(**graph_labels)
+
     xVal = data_matrix[featureNames[count]][0:500]
-    axe.scatter(xVal, yVal)
+    axe.scatter(xVal, yVal, **descriptor)
     fig.canvas.draw_idle()
     
 button_real.on_clicked(whenClick)    
