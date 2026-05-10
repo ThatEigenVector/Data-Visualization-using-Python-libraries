@@ -10,17 +10,19 @@ data_matrix = data.data
 target_vec = data.target
 featureNames = data.feature_names
 
+count = 0
+marker_arr = ["o", "x", "+", "^", "s", "D", "*", "d"]
+colour_arr = ["red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow",]
 descriptor = {
     "s":          20,        # point size
-    "c":          "blue",    # colour — can be a single colour or array of values
-    "marker":     "o",       # shape: "o", "x", "+", "^", "s", "D" etc.
+    "c":          colour_arr[count],    # colour — can be a single colour or array of values
+    "marker":     marker_arr[count],       # shape: "o", "x", "+", "^", "s", "D" etc.
     "alpha":      0.5,       # transparency, 0 (invisible) to 1 (solid)
     "edgecolors": "black",   # outline colour of each point
     "linewidths": 0.5,       # thickness of that outline
 }
 
 
-count = 0
 yVal = target_vec[0:500]
 xVal = data_matrix[featureNames[count]][0:500]
 fig, axe = plt.subplots()
@@ -33,28 +35,48 @@ graph_labels = {
 }
 
 axe.set(**graph_labels)
-button_space = fig.add_axes([0.01, 0.005, 0.2, 0.05])
-button_real = widgets.Button(button_space, label="Next", hovercolor="red")
+back_button_space = fig.add_axes([0.01, 0.005, 0.2, 0.05])
+next_button_space = fig.add_axes([0.22, 0.005, 0.2, 0.05])
+next_button_real = widgets.Button(next_button_space, label="Next", hovercolor="red")
+back_button_real = widgets.Button(back_button_space, label="Back", hovercolor="red")
 
-
-def whenClick(event):
-    print("button clicked")
+def whenClickNext(event):
     global count
     count += 1
     if count == 8:
         count = 0
     axe.cla()
-    graph_labels = {               # rebuilt here with new count
-        "xlabel": featureNames[count],
-        "ylabel": "median house value",
-        "title": f"{featureNames[count]} vs median house value"
-    }
+    
+    graph_labels["xlabel"] = featureNames[count]
+    graph_labels["title"] = f"{featureNames[count]} vs median house value"
+    axe.set(**graph_labels)
+
+    descriptor["c"] = colour_arr[count]
+    descriptor["marker"] = marker_arr[count]
+
+    xVal = data_matrix[featureNames[count]][0:500]
+    axe.scatter(xVal, yVal, **descriptor)
+    fig.canvas.draw_idle()
+
+def whenClickBack(event):
+    global count
+    count -= 1
+    if count < 0:
+        count = 7
+    axe.cla()
+
+    descriptor["c"] = colour_arr[count]
+    descriptor["marker"] = marker_arr[count]
+
+    graph_labels["xlabel"] = featureNames[count]
+    graph_labels["title"] = f"{featureNames[count]} vs median house value"
     axe.set(**graph_labels)
 
     xVal = data_matrix[featureNames[count]][0:500]
     axe.scatter(xVal, yVal, **descriptor)
     fig.canvas.draw_idle()
-    
-button_real.on_clicked(whenClick)    
+
+next_button_real.on_clicked(whenClickNext)    
+back_button_real.on_clicked(whenClickBack)
 
 plt.show()
