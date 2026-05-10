@@ -1,0 +1,37 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sklearn.datasets as data
+from matplotlib import widgets
+
+data = data.fetch_california_housing(as_frame=True)
+
+data_matrix = data.data
+target_vec = data.target
+featureNames = data.feature_names
+
+
+count = 0
+yVal = target_vec[0:500]
+xVal = data_matrix[featureNames[count]][0:500]
+fig, axe = plt.subplots()
+axe.scatter(xVal, yVal)
+
+button_space = fig.add_axes([0.4, 0.02, 0.2, 0.05])
+button_real = widgets.Button(button_space, label="Next", hovercolor="red")
+
+
+def whenClick(event):
+    print("button clicked")
+    global count
+    count += 1
+    if count == 4:
+        count = 0
+    axe.cla()
+    xVal = data_matrix[featureNames[count]][0:500]
+    axe.scatter(xVal, yVal)
+    fig.canvas.draw_idle()
+    
+button_real.on_clicked(whenClick)    
+
+plt.show()
