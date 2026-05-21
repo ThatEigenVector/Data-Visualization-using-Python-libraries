@@ -11,16 +11,21 @@ feature_names = data.feature_names
 
 fig, axe = plt.subplots()
 
-x = data_matrix[feature_names[0]]
-y = data_targets
+x = data_matrix[feature_names[0]][0:0]
+y = data_targets[0:0]
 axe.scatter(x,y)
 
 slider_space = fig.add_axes([0.15, 0.005, 0.73, 0.05])
-The_Slider = widgets.Slider(slider_space, valmin=1, valmax=10000, valstep=1)
+The_Slider = widgets.Slider(slider_space, valmin=1, valmax=1000, valstep=1, label="Something")
+
+
+def WhenScrolling(currentVal):
+    x = data_matrix[feature_names[0]][0:currentVal]
+    y = data_targets[0:currentVal]
+    axe.cla()
+    axe.scatter(x,y)
+
+
+The_Slider.on_changed(WhenScrolling)
+
 plt.show()
-
-def WhenScrolling():
-    The_Slider.val
-
-#finish the scrollbar function
-#test whether the scrollbar works and understand its properties and methods. 
